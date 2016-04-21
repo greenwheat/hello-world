@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>秀梅</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            /*字体样式*/
+            font: 14px/1.2 "\5FAE\8F6F\96C5\9ED1", Verdana;
+            background: #a67236;
+        }
+        #div1{
+            width:90%;
+            height:100%;
+            margin:20px auto;
+            border:1px solid red;
+        }
+
+        #div1 div {
+            width: 50px;
+            height: 50px;
+            line-height:50px;
+            text-align: center;
+            margin: 10px auto;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            display: inline-block;
+            color: #fff;
+            /*点击时不会选中文本*/
+            -webkit-user-select: none;
+            cursor: pointer;
+            /*position: absolute;*/
+        }
+
+        .c0 {
+            position: absolute;
+            top:0;
+            left:0;
+            background: #fff;
+        }
+
+        .c1 {
+            position: absolute;
+            top:80px;
+            left:0;
+            background: #000;
+        }
+
+        #reset{
+            padding:5px 15px;
+            background: #024635;
+            color:#fff;
+            border:none;
+        }
+        /* 容器内的元素居中
+        display: -webkit-box;
+        -webkit-box-align: center;
+        -webkit-box-pack: center;
+        */
+        /* 一行文字超出后自动截取
+        text-overflow:ellipsis; */
+        /*ellipsis:截取后用...作为代替；clip：没有省略号*/
+        /*white-space: nowrap; 强制不换行*/
+        /*overflow:hidden; 溢出隐藏*/
+
+    </style>
+</head>
+<body>
+<div id="div1">
+    <input type="button" value="reset" id="reset"><br>
+</div>
+<script>
+    function qiZi(parent) {
+        //黑子 白子
+        var black = document.createDocumentFragment(),
+            white = document.createDocumentFragment(),
+                b,w;
+        for(var i=0;i<100;i++){
+            b = document.createElement("div");
+            b.style.float = "left";
+            b.className = "c1";
+            black.appendChild(b);
+            w = document.createElement("div");
+            w.style.float = "right";
+            w.className = "c0";
+            white.appendChild(w);
+        }
+        black.appendChild(white);
+        parent.appendChild(black);
+    }
+
+    var eleX, eleY, mouseX, mouseY,
+            isDown = false;
+    var div1 = document.getElementById("div1");
+    qiZi(div1);
+    var oDivs = div1.getElementsByTagName("div");
+    //Firefox支持属性pageX,与pageY属性，这两个属性已经把页面滚动计算在内了,
+    //在Chrome可以通过document.body.scrollLeft，document.body.scrollTop计算出页面滚动位移，
+    //而在IE下可以通过document.documentElement.scrollLeft ，document.documentElement.scrollTop
+    function getMousePos(e) {
+        e = event || window.event;
+        //console.log(e);
+        var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+        var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+        var x = e.pageX || e.clientX + scrollX;
+        var y = e.pageY || e.clientY + scrollY;
+        //alert('x: ' + x + '\ny: ' + y);
+        return {'x': x, 'y': y};
+    }
+    function mouseDown(ele, e) {
+        ele.style.zIndex = 999;
+        isDown = true;
+        mouseX = getMousePos(e).x;
+        mouseY = getMousePos(e).y;
+        ele.style.position = "absolute";
+        eleX = ele.style.left = (mouseX - 25) + "px";
+        eleY = ele.style.top = (mouseY - 30) + "px";
+        console.log(mouseX, mouseY);
+        console.log(eleX, eleY);
+    }
+    function mouseMove(ele, e) {
+        if (isDown) {
+            ele.style.left = (getMousePos(e).x - 25) + "px";
+            ele.style.top = (getMousePos(e).y - 30) + "px";
+        }
+    }
+    for (var i = 0; i < oDivs.length; i++) {
+        oDivs[i].onmousedown = function () {
+            mouseDown(this, event);
+        };
+        oDivs[i].onmousemove = function () {
+            mouseMove(this, event);
+        };
+        oDivs[i].onmouseup = function () {
+            isDown = false;
+            this.style.zIndex = -1;
+        }
+    }
+    function reSet() {
+        for(var i=0;i<oDivs.length;i++){
+            oDivs[i].style.position = "";
+        }
+    }
+    var oBtn = document.getElementById("reset");
+    oBtn.onclick = reSet;
+    /* "use strict";
+     function fn(num1,num2) {
+     console.log(num1+num2);
+     console.log(this);
+     }
+     var obj={name:"111"};
+     //预处理：事先把fn的this改变为我们想要的结果，并且把参数值也准备好，以后要用到了，直接的执行即可
+     var tempFn = fn.bind(obj,1,2);
+     tempFn();
+     fn(1,2); //严格模式下，没有调用主体里，函数中的this就是undefined
+     window.fn(1,2);
+     fn.apply(obj,[1,2]);*/
+
+    //获取数组中的最大值和最小值(※记住)
+    var ary = [32, 44, 23, 18, 6, 34, 22, 1];
+    var min, max;
+
+    //1、排序思想
+    //    ary.sort(function (a,b) {return a-b;});
+    //    min = ary[0];
+    //    max = ary[ary.length-1];
+
+    //2、假设思想
+    //    min = ary[0];
+    //    max = ary[0];
+    //    for (var i = 0; i < ary.length; i++) {
+    //        var cur = ary[i];
+    //        cur < min ? min = cur : null;
+    //        cur > max ? max = cur : null;
+    //    }
+
+    //3、拼接字符串方法
+    //min = eval("Math.min("+ary.toString()+")");
+    //max = eval("Math.max("+ary.toString()+")");
+
+    //4、apply，可以以数组形式，挨个将数组里的值传入函数中
+    min = Math.min.apply(null, ary);
+    max = Math.max.apply(null, ary);
+    console.log(min, max);
+
+    //求平均数
+    function avgFn() {
+        Array.prototype.sort.call(arguments, function (a, b) {
+            return a - b;
+        });
+        console.log(arguments);
+        [].shift.call(arguments);
+        console.log(arguments);
+        [].pop.call(arguments);
+        console.log(arguments);
+        return (eval([].join.call(arguments, "+")) / arguments.length).toFixed(2);
+    }
+    var avg = avgFn(23, 22, 43, 12, 11, 56);
+    console.log(avg);
+
+</script>
+</body>
+</html>
