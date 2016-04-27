@@ -1,0 +1,84 @@
+﻿
+/*选项卡*/
+#tabs{
+    width:600px;
+    margin:10px auto;
+}
+#tabs ul li{
+    margin:0 0 -1px 0;
+    display: inline-block;
+    width:150px;
+    height:40px;
+    line-height:40px;
+    text-align: center;
+    background: #024635;
+    color: #fff;
+}
+#tabs ul li.select{
+    border:1px solid #024635;
+    border-bottom:none;
+    background: #fff;
+    color: #024635;
+}
+#tabs div{
+    border:1px solid #024635;
+    width:600px;
+    min-height:400px;
+    display: none;
+    padding:20px;
+}
+#tabs div.select{
+    display: block;
+}
+
+/*表单验证*/
+#form{
+    width:500px;
+    margin:50px auto;
+}
+.btn{
+    min-width:80px;
+    height:30px;
+    line-height:30px;
+    background: #ff3333;
+    color: #fff;
+    border:none;
+    cursor: pointer;
+    margin:10px 5px 0 0;
+    padding:0 5px;
+}
+#form label{
+    display: block;
+    height:35px;
+    line-height:35px;
+}
+#form label input{
+    border:1px solid #a35045;
+    margin: 0 10px;
+    color:#999;
+}
+/*表格排序*/
+#table{
+    width:500px;
+    max-height:400px;
+    overflow: hidden;
+    margin:40px auto;
+    border:1px solid #ccc;
+    padding:20px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 10px 0 #aaa;
+    -moz-box-shadow: 0 0 10px 0 #aaa;
+    box-shadow: 0 0 10px 0 #aaa;
+}
+#table th{
+    height:40px;
+    background: #ff3333;
+    color:#fff;
+    cursor: pointer;
+}
+
+#table td{
+    height:40px;
+    line-height:40px;
+    text-align: center;
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tab</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font: 14px/1.2 "\5FAE\8F6F\96C5\9ED1", Verdana;
+        }
+
+        ul, li {
+            list-style: none;
+        }
+
+        /*选项卡*/
+        #tab {
+            width: 500px;
+            margin: 10px auto;
+        }
+
+        #tab ul li {
+            display: inline-block;
+            width: 109px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border: 1px solid #cc7214;
+            margin-bottom: -2px;
+            background: #ff8d19;
+            color: #fff;
+        }
+
+        #tab ul li.active {
+            background: #fff;
+            color: #cc7214;
+            border-bottom:none;
+        }
+
+        #tab div {
+            display: none;
+            width: 402px;
+            height: 300px;
+            padding: 20px;
+            background: #fff;
+            color: #cc7214;
+            border:1px solid #cc7214;
+            border-top:none;
+        }
+
+        #tab div.active {
+            display: block;
+        }
+
+        /*计时器实现层放大缩小*/
+        #ani {
+            width: 900px;
+            margin: 20px auto 0;
+        }
+
+        #ani li {
+            float: left;
+            display: -webkit-box;
+            -webkit-box-align: center;
+            -webkit-box-pack: center;
+            width: 200px;
+            height: 150px;
+            border: 1px solid #aaa;
+            margin-right:5px;
+            cursor: pointer;
+            background: #eee;
+        }
+
+        #ani li span {
+            display: block;
+            width: 0;
+            height: 0;
+            background: rgba(221,0,0,.7);
+        }
+    </style>
+</head>
+<body>
+<div id="tab">
+    <ul>
+        <li class="active">1</li><!--
+        --><li>2</li><!--
+        --><li>3</li><!--
+        --><li>4</li>
+    </ul>
+    <div class="active">1111</div>
+    <div>22222</div>
+    <div>333333</div>
+    <div>444444444</div>
+</div>
+<ul id="ani">
+    <li><span></span></li>
+    <li><span></span></li>
+    <li><span></span></li>
+    <li><span></span></li>
+</ul>
+<script>
+    /*
+     *
+     * 选项卡改写
+     *
+     * */
+    var oTab = document.getElementById("tab");
+    var oLis = oTab.getElementsByTagName("li");
+    var oDivs = oTab.getElementsByTagName("div");
+    var len = oLis.length;
+    function tabChang(nIndex) {
+        for (var i = 0; i < len; i++) {
+            oLis[i].className = "";
+            oDivs[i].className = "";
+        }
+        oLis[nIndex].className = "active";
+        oDivs[nIndex].className = "active";
+    }
+
+    for (var i = 0; i < len; i++) {
+        (function (i) {
+            oLis[i].onmouseover = function () {
+                tabChang(i);
+            };
+        })(i);
+    }
+
+
+    /*
+     *
+     * setTimeout实现一个从中间放大的层
+     *
+     * */
+    var oAni = document.getElementById("ani");
+    var oBoxes = oAni.getElementsByTagName("li");
+    var oSpans = oAni.getElementsByTagName("span");
+
+    function zoomIn(index) {
+        var width = parseInt(oSpans[index].style.width);
+        var height = parseInt(oSpans[index].style.height);
+        if (width >= 100) {
+            return;
+        }
+        oSpans[index].style.width = (++width) + "%";
+        oSpans[index].style.height = (++height) + "%";
+    }
+    function zoomOut(index) {
+        var width = parseInt(oSpans[index].style.width);
+        var height = parseInt(oSpans[index].style.height);
+        if (width <= 0) {
+            return;
+        }
+        oSpans[index].style.width = (--width) + "%";
+        oSpans[index].style.height = (--height) + "%";
+    }
+    for (var j = 0; j < oSpans.length; j++) {
+        oSpans[j].style.width = "0%";
+        oSpans[j].style.height = "0%";
+        (function (index) {
+            var timer1, timer2;
+            oBoxes[index].onmouseover = function () {
+                clearTimeout(timer2);
+                timer1 = setTimeout(function () {
+                    clearTimeout(timer1);
+                    zoomIn(index);
+                    timer1 = setTimeout(arguments.callee, 10);
+                }, 10);
+            };
+            oBoxes[index].onmouseout = function () {
+                clearTimeout(timer1);
+                timer2 = setTimeout(function () {
+                    clearTimeout(timer2);
+                    zoomOut(index);
+                    timer2 = setTimeout(arguments.callee, 10);
+                }, 10)
+            };
+        })(j);
+    }
+
+    /*
+     *
+     * 判断是否公有属性 hasPublicProperty
+     *
+     * */
+    Object.prototype.hasPublicProperty = function (attr) {
+        return (attr in this) && (!this.hasOwnProperty(attr));
+    };
+    var obj = {};
+    console.log(obj.hasPublicProperty("hasPublicProperty"));
+
+    /*
+     *
+     * 重写Array.slice forEach
+     *
+     * */
+    Array.prototype.mySlice = function () {
+        var start = arguments[0];
+        var end = arguments[1];
+        var arr = [];
+        start = (typeof start == "undefined") ? 0 : start;
+        end = (typeof end == "undefined") ? this.length : end;
+        if (isNaN(start) || isNaN(end)) {
+            return arr;
+        }
+        if (start < 0) {
+            start += this.length;
+        }
+        if (end < 0) {
+            end += this.length;
+        } else if (end > this.length) {
+            end = this.length;
+        }
+        for (var i = start; i < end; i++) {
+            arr[arr.length] = this[i];
+
+        }
+        return arr;
+    };
+    console.log([1, 2, 3, 4, 5].slice(1).slice(1));
+    console.log([1, 2, 3, 4, 5].mySlice(1).mySlice(1));
+
+    Array.prototype.myForEach = function (fn) {
+        for (var i = 0; i < this.length; i++) {
+            fn(this[i], i);
+        }
+    };
+    [1, 2, 3, 1].myForEach(function (item, index) {
+        console.log(item, index);
+    });
+
+
+</script>
+</body>
+</html>
