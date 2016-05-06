@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tab</title>
+    <title>选项卡和简单动画</title>
     <style type="text/css">
         * {
             margin: 0;
@@ -140,39 +140,47 @@
         var width = parseInt(oSpans[index].style.width);
         var height = parseInt(oSpans[index].style.height);
         if (width >= 100) {
-            return;
+            return false;
         }
         oSpans[index].style.width = (++width) + "%";
         oSpans[index].style.height = (++height) + "%";
+        return true;
     }
     function zoomOut(index) {
         var width = parseInt(oSpans[index].style.width);
         var height = parseInt(oSpans[index].style.height);
         if (width <= 0) {
-            return;
+            return false;
         }
         oSpans[index].style.width = (--width) + "%";
         oSpans[index].style.height = (--height) + "%";
+        return true;
     }
     for (var j = 0; j < oSpans.length; j++) {
         oSpans[j].style.width = "0%";
         oSpans[j].style.height = "0%";
         (function (index) {
-            var timer1, timer2;
+            oBoxes[index].timer = null;
             oBoxes[index].onmouseover = function () {
-                clearTimeout(timer2);
-                timer1 = setTimeout(function () {
-                    clearTimeout(timer1);
-                    zoomIn(index);
-                    timer1 = setTimeout(arguments.callee, 10);
+                var that = this;
+                clearTimeout(that.timer);
+                that.timer = setTimeout(function () {
+                    clearTimeout(that.timer);
+                    var move = zoomIn(index);
+                    if(move){
+                        that.timer = setTimeout(arguments.callee, 10);
+                    }
                 }, 10);
             };
             oBoxes[index].onmouseout = function () {
-                clearTimeout(timer1);
-                timer2 = setTimeout(function () {
-                    clearTimeout(timer2);
-                    zoomOut(index);
-                    timer2 = setTimeout(arguments.callee, 10);
+                var that = this;
+                clearTimeout(that.timer);
+                that.timer = setTimeout(function () {
+                    clearTimeout(that.timer);
+                    var move = zoomOut(index);
+                    if(move){
+                        that.timer = setTimeout(arguments.callee, 10);
+                    }
                 }, 10)
             };
         })(j);

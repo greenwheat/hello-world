@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>简单动画-匀/加/减速</title>
+    <style type="text/css">
+        html, body {
+            width:100%;
+            height:100%;
+            margin: 0;
+            padding: 0;
+            font: 15px/1.2 "\5FAE\8F6F\96C5\9ED1", Verdana;
+        }
+        #container{
+            position: relative;
+            margin:10px auto;
+            width:90%;
+            height:90%;
+            background: #eee;
+            cursor: crosshair;
+            -webkit-user-select: none;
+        }
+        #form{
+            margin:10px 0 0 10px;
+        }
+        #form select{
+            width:120px;
+            height:30px;
+            line-height:30px;
+            padding-left:10px;
+            border:2px solid #eee;
+            background: #333;
+            color:#fff;
+            font-family:"\5FAE\8F6F\96C5\9ED1";
+        }
+        #form select:focus{
+            border:none;
+        }
+    </style>
+</head>
+<body>
+<form id="form">
+    <label>请选择运动方式：
+    <select name="moveOptions">
+        <option value="linear">匀速</option>
+        <option value="hurry">加速</option>
+        <option value="ease">减速</option>
+    </select>
+        ，现在你可以点击灰色背景区域内的任何位置，圆球将移动到十字中心处，但不会超出边界
+    </label>
+</form>
+<div id="container"></div>
+</body>
+<script src="js/DOM(1).js"></script>
+<script src="js/tween.js"></script>
+<script>
+    var oCon = document.getElementById('container');
+    var oBox = document.createElement('div');
+    var oOps = document.forms.item(0).moveOptions;
+    var styles = {
+        width:'150px',
+        height:150,
+        position:'absolute',
+        left:0,
+        top:0,
+        backgroundColor:'green',
+        borderRadius: 100,
+        opacity:0.8
+    };
+    DOM.setGroupCSS(oBox,styles);
+    oCon.appendChild(oBox);
+    var maxL = oCon.offsetWidth - oBox.offsetWidth;
+    var minL = 0;
+    var maxT = oCon.offsetHeight - oBox.offsetHeight;
+    var minT = 0;
+    oCon.count = 0;
+    oCon.onclick = function(){
+        this.count++;
+        var w = this.count%2?0:150; //奇数次点击缩小；偶数次点击放大
+        var h = this.count%2>0?0:150;
+        var o = this.count%2>0?0:0.8;
+        var l = tween.getMousePos().x - DOM.offSet(this).x - w/2;
+        var t = tween.getMousePos().y - DOM.offSet(this).y - h/2;
+        l = l>maxL?maxL:l;
+        l = l<minL?minL:l;
+        t = t>maxT?maxT:t;
+        t = t<minT?minT:t;
+        console.log(w,h,o);
+        var target = {
+            left: l,
+            top: t,
+            width: w,
+            height:h,
+            opacity:o
+        };
+        var option = oOps.options[oOps.selectedIndex].value;
+        window.myAnimation(oBox,target,1000,option);
+    }
+</script>
+</html>
