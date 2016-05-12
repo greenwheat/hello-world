@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图</title>
+    <link rel="stylesheet" href="css/roll.css">
+</head>
+<body>
+<div id="container">
+    <div id="roller">
+        <div>四四</div>
+        <div>一</div>
+        <div>二</div>
+        <div>三</div>
+        <div>四</div>
+        <div>一一</div>
+    </div>
+    <div id="preview">
+        <ul>
+            <li class="current">一</li>
+            <li>二</li>
+            <li>三</li>
+            <li>四</li>
+        </ul>
+        <div id="prev">&lt;</div>
+        <div id="next">&gt;</div>
+        <div id="current"></div>
+    </div>
+</div>
+<script src="js/mytween.js"></script>
+<script>
+    /**
+     * 轮播图
+     */
+    var oRoll = document.getElementById("roller");
+    var oBoxes = oRoll.getElementsByTagName("div");
+    var oPre = document.getElementById("preview");
+    var oLis = oPre.getElementsByTagName("li");
+    var oCur = document.getElementById("current");
+    var oPrev = document.getElementById("prev");
+    var oNext = document.getElementById("next");
+    oRoll.step = 1;//设置为自定义属性
+    /**
+     * 使指定元素向左或向右移动n步
+     * @param n 正数为向右，负数为向左
+     */
+    function move(n) {
+        this.step = this.step+n;
+        var s = this.step;
+        if(s>=6){
+            this.step=2+s%6;
+            myAnimate.css.call(this,"left",-700);
+        }else if(s<=-1){
+            this.step=4+s%6;
+            myAnimate.css.call(this,"left",-2800);
+        }
+        preChange(this.step-1);
+        myAnimate(this,"left",this.step*-700,700);
+    }
+    function preChange(index) {
+        for(var i=0,len=oLis.length;i<len;i++){
+            oLis[i].className="";
+        }
+        index<0?index=len-1:false;//变成环状
+        index>len-1?index=0:false;
+        oLis[index].className="current";
+        myAnimate(oCur,"left",195+index*74.5,300); //缩略图的小方框移动
+    }
+
+    for(var i=0;i<oLis.length;i++){
+        ~(function(i){
+            oLis[i].onclick=function () {
+                var step = i+1-oRoll.step;
+                if(step>=3){
+                    var n = step-4;
+                }else if(step<=-3){
+                    n=step+4;
+                }else{
+                    n=step;
+                }
+                window.clearInterval(oRoll.timer1);
+                oRoll.timer1=null;
+                move.call(oRoll,n);
+                oRoll.timer1 = window.setTimeout(function () {
+                    oRoll.timer1 =setInterval(function () {
+                        move.call(oRoll,1);
+                    },2700);
+                },3000);
+            }
+        })(i);
+    }
+    oPrev.onclick=function () {
+        window.clearInterval(oRoll.timer1);
+        oRoll.timer1=null;
+        move.call(oRoll,-1);
+        oRoll.timer1 = window.setTimeout(function () {
+            oRoll.timer1 =setInterval(function () {
+                move.call(oRoll,1);
+            },2700);
+        },3000);
+    };
+    oNext.onclick=function () {
+        window.clearInterval(oRoll.timer1);
+        oRoll.timer1=null;
+        move.call(oRoll,1);
+        oRoll.timer1 = window.setTimeout(function () {
+            oRoll.timer1 =setInterval(function () {
+                move.call(oRoll,1);
+            },2700);
+        },3000);
+    };
+
+    oRoll.timer1=window.setInterval(function () {
+        move.call(oRoll,1);
+    },2700);
+
+</script>
+</body>
+</html>
